@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+
+  --font-display: "Plus Jakarta Sans", "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Caveat", "Alex Brush", cursive;
+
+  /* Ocean: deep south-coast water, the brand's primary */
+  --color-ocean-950: #061b2e;
+  --color-ocean-900: #0b2c4a;
+  --color-ocean-800: #12406a;
+  --color-ocean-600: #2f679a;
+  --color-ocean-300: #9dbad6;
+  --color-ocean-100: #dde8f1;
+  --color-ocean-50: #f0f5f9;
+
+  /* Sun: late-afternoon light over Bentota beach, used for actions and priority */
+  --color-sun-600: #c97710;
+  --color-sun-500: #f2a22c;
+  --color-sun-100: #fcebcd;
+
+  /* Palm: river mangroves and coconut groves, used for confirmations */
+  --color-palm-700: #1f5e4e;
+  --color-palm-500: #2f8069;
+  --color-palm-100: #d8ece4;
+
+  --color-surf: #f5f8fa;
+  --color-danger: #b42318;
+  --color-danger-100: #fde4e1;
+}
+
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-surf font-sans text-ocean-950 antialiased;
+    font-feature-settings: "ss01";
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-balance;
+    letter-spacing: -0.02em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-sun-500);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-sun-100);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The route line: the one signature element of the public site. */
+@keyframes route-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes route-grow-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.route-grow {
+  transform-origin: left center;
+  animation: route-grow 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+}
+.route-grow-vertical {
+  transform-origin: center top;
+  animation-name: route-grow-y;
+}
+@media (max-width: 639px) {
+  .route-grow {
+    transform-origin: center top;
+    animation-name: route-grow-y;
+  }
+}
+@keyframes stop-pop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.stop-pop {
+  animation: stop-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes alert-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(242 162 44 / 0.55); }
+  50% { box-shadow: 0 0 0 6px rgb(242 162 44 / 0); }
+}
+.alert-pulse {
+  animation: alert-pulse 1.8s ease-in-out infinite;
+}
+
+/* ── Route Map Popup Animations ────────────────────────────────── */
+@keyframes route-dash {
+  to { stroke-dashoffset: -40; }
+}
+.route-dash {
+  animation: route-dash 1.2s linear infinite;
+}
+
+@keyframes pin-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(242 162 44 / 0.5); }
+  50% { box-shadow: 0 0 0 8px rgb(242 162 44 / 0); }
+}
+.pin-pulse {
+  animation: pin-pulse 2s ease-in-out infinite;
+}
+
+@keyframes pin-pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.pin-pop-in {
+  animation: pin-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pin-fade-out {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.5); opacity: 0; }
+}
+.pin-fade-out {
+  animation: pin-fade-out 0.3s ease-out both;
+}
+
+@keyframes path-draw {
+  from { stroke-dashoffset: 2000; }
+  to { stroke-dashoffset: 0; }
+}
+.path-draw {
+  stroke-dasharray: 2000;
+  animation: path-draw 1.5s ease-out forwards;
+}
+
+@keyframes slide-up-in {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.slide-up-in {
+  animation: slide-up-in 0.4s ease-out both;
+}

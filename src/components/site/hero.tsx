@@ -1,8 +1,128 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, MapPin, Users, ShieldCheck } from "lucide-react";
+import { 
+  ArrowRight, 
+  MapPin, 
+  Users, 
+  ShieldCheck, 
+  Leaf, 
+  Star, 
+  Route 
+} from "lucide-react";
+
+interface StatItem {
+  id: string;
+  icon: typeof Users;
+  targetValue: number;
+  suffix: string;
+  decimals?: number;
+  label: string;
+  description: string;
+}
+
+const STATS: StatItem[] = [
+  {
+    id: "travelers",
+    icon: Users,
+    targetValue: 12500,
+    suffix: "+",
+    label: "HAPPY TRAVELERS",
+    description: "Guests from 40+ countries discovering Sri Lanka with us.",
+  },
+  {
+    id: "stops",
+    icon: Leaf,
+    targetValue: 50,
+    suffix: "+",
+    label: "CURATED STOPS",
+    description: "Beaches, tea plantations & UNESCO heritage sites.",
+  },
+  {
+    id: "rating",
+    icon: Star,
+    targetValue: 4.9,
+    suffix: " / 5",
+    decimals: 1,
+    label: "GUEST RATING",
+    description: "Over 1,800+ 5-star reviews on TripAdvisor & Google.",
+  },
+  {
+    id: "routes",
+    icon: Route,
+    targetValue: 100,
+    suffix: "%",
+    label: "TAILORED ROUTES",
+    description: "Fully customizable itineraries with private chauffeurs.",
+  },
+];
+
+function StatItemRow({ 
+  stat, 
+  isFirst, 
+  isLast 
+}: { 
+  stat: StatItem; 
+  isFirst: boolean; 
+  isLast: boolean;
+}) {
+  const [currentValue, setCurrentValue] = useState(0);
+  const Icon = stat.icon;
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    const duration = 1400; // ms
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const val = easeProgress * stat.targetValue;
+      setCurrentValue(val);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        setCurrentValue(stat.targetValue);
+      }
+    };
+
+    const frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [stat.targetValue]);
+
+  const formattedNumber = stat.decimals
+    ? currentValue.toFixed(stat.decimals)
+    : Math.floor(currentValue).toLocaleString();
+
+  return (
+    <div className={`flex items-start gap-3.5 sm:gap-4 lg:px-5 xl:px-7 ${isFirst ? 'lg:pl-2' : ''} ${isLast ? 'lg:pr-2' : ''}`}>
+      {/* Circular Icon Badge */}
+      <div className="flex size-11 sm:size-12 lg:size-12 xl:size-13 items-center justify-center rounded-full border border-white/20 bg-white/[0.04] text-[#f5a623] shrink-0 shadow-sm mt-0.5">
+        <Icon className="size-5 sm:size-5.5 stroke-[1.8]" />
+      </div>
+
+      {/* Text Block */}
+      <div className="min-w-0 flex-1">
+        <div className="text-2xl sm:text-3xl lg:text-[1.85rem] xl:text-3xl font-extrabold text-white tracking-tight leading-none">
+          {formattedNumber}
+          <span className="text-[#f5a623]">{stat.suffix}</span>
+        </div>
+
+        <h3 className="mt-1.5 text-xs sm:text-sm font-extrabold text-white tracking-wider uppercase leading-tight">
+          {stat.label}
+        </h3>
+
+        <p className="mt-1 text-[11px] sm:text-xs text-white/70 leading-relaxed font-normal">
+          {stat.description}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export function HeroSection() {
   return (
@@ -49,7 +169,7 @@ export function HeroSection() {
         <span>People</span>
       </div>
 
-      {/* Main Content Grid */}
+      {/* Main Content Container */}
       <div className="relative z-10 mx-auto w-full max-w-[1530px] px-6 sm:px-12 lg:px-16 xl:px-20 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-end min-h-[540px]">
 
@@ -59,7 +179,6 @@ export function HeroSection() {
             <p className="text-[#f5a623] text-xs sm:text-sm font-bold tracking-[0.3em] uppercase mb-4">
               Sri Lanka, Your Way
             </p>
-
 
             {/* Main Headline with Yellow Brush Underline */}
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tight text-white leading-[1.02] sm:leading-[1.05]">
@@ -158,7 +277,6 @@ export function HeroSection() {
             <div className="mt-8 sm:mt-12 font-script text-white/70 text-2xl sm:text-3xl leading-snug tracking-wide">
               <p>More than a trip</p>
               <p className="relative inline-block">
-
                 <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-white/40 rounded-full" />
               </p>
             </div>
@@ -225,6 +343,21 @@ export function HeroSection() {
           </div>
 
         </div>
+
+        {/* Unified Single Glassmorphic Stat Bar Card (Separated into 4) */}
+        <div className="mt-12 sm:mt-16 w-full rounded-3xl border border-white/15 bg-[#061e32]/65 backdrop-blur-xl p-6 sm:p-7 lg:p-7 xl:p-8 shadow-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-white/15">
+            {STATS.map((stat, idx) => (
+              <StatItemRow 
+                key={stat.id} 
+                stat={stat} 
+                isFirst={idx === 0} 
+                isLast={idx === STATS.length - 1} 
+              />
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

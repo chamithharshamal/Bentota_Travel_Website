@@ -17,12 +17,13 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
           {settings.address && <p className="mt-4 text-base text-white/70">{settings.address}</p>}
         </div>
         <div>
-          <h2 className="text-base font-semibold text-sun-500">Tours</h2>
+          <h2 className="text-base font-semibold text-sun-500">Explore</h2>
           <ul className="mt-3 space-y-2 text-base text-white/80">
-            <li><Link href="/tours/one-day" className="hover:text-white">Day tours</Link></li>
-            <li><Link href="/tours/two-day" className="hover:text-white">Two-day tours</Link></li>
-            <li><Link href="/destinations" className="hover:text-white">Destinations</Link></li>
-            <li><Link href="/book" className="hover:text-white">Book a trip</Link></li>
+            <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+            <li><Link href="/packages" className="hover:text-white transition-colors">Tour packages</Link></li>
+            <li><Link href="/destinations" className="hover:text-white transition-colors">Destinations</Link></li>
+            <li><Link href="/#gallery" className="hover:text-white transition-colors">Traveler gallery</Link></li>
+            <li><Link href="/#contact" className="hover:text-white transition-colors">Contact us</Link></li>
           </ul>
         </div>
         <div>

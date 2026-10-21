@@ -169,7 +169,7 @@ const PACKAGES: PackageItem[] = [
   },
 ];
 
-export function ExplorePackagesSection() {
+export function ExplorePackagesSection({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   const [activePackageId, setActivePackageId] = useState<string | null>(null);
   const activePackage = PACKAGES.find((p) => p.id === activePackageId);
 
@@ -225,30 +225,32 @@ export function ExplorePackagesSection() {
 
       <div className="mx-auto w-[80%] relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center">
-          {/* Accent Badge Line */}
-          <div className="flex items-center gap-3 mb-2.5">
-            <span className="h-px w-10 sm:w-14 bg-gradient-to-r from-transparent to-[#f5a623]" />
-            <span className="text-[#c97710] text-xs font-extrabold tracking-[0.25em] uppercase">
-              Handpicked Packages
-            </span>
-            <span className="h-px w-10 sm:w-14 bg-gradient-to-l from-transparent to-[#f5a623]" />
+        {!hideHeader && (
+          <div className="flex flex-col items-center text-center">
+            {/* Accent Badge Line */}
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="h-px w-10 sm:w-14 bg-gradient-to-r from-transparent to-[#f5a623]" />
+              <span className="text-[#c97710] text-xs font-extrabold tracking-[0.25em] uppercase">
+                Handpicked Packages
+              </span>
+              <span className="h-px w-10 sm:w-14 bg-gradient-to-l from-transparent to-[#f5a623]" />
+            </div>
+
+            {/* Main Header Title */}
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#061b2e]">
+              <span className="text-[#f5a623]">Explore</span> Our Packages
+            </h2>
+
+            {/* Subtitle Description */}
+            <p className="mt-3.5 max-w-2xl text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+              Curated travel experiences across Sri Lanka — beaches, mountains, culture and more.
+              <br className="hidden sm:inline" /> Choose your next adventure.
+            </p>
           </div>
-
-          {/* Main Header Title */}
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#061b2e]">
-            <span className="text-[#f5a623]">Explore</span> Our Packages
-          </h2>
-
-          {/* Subtitle Description */}
-          <p className="mt-3.5 max-w-2xl text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
-            Curated travel experiences across Sri Lanka — beaches, mountains, culture and more.
-            <br className="hidden sm:inline" /> Choose your next adventure.
-          </p>
-        </div>
+        )}
 
         {/* Two Packages Stack */}
-        <div className="mt-12 sm:mt-14 flex flex-col gap-8 sm:gap-10">
+        <div className={`${hideHeader ? "mt-4 sm:mt-6" : "mt-12 sm:mt-14"} flex flex-col gap-8 sm:gap-10`}>
           {PACKAGES.map((pkg) => (
             <div
               key={pkg.id}

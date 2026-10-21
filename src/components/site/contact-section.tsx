@@ -45,7 +45,7 @@ export function ContactUsSection() {
   };
 
   return (
-    <section id="contact" className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
+    <section id="contact" className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden scroll-mt-10">
       {/* Decorative Cursive Watermark (Right side) */}
       <div
         aria-hidden="true"

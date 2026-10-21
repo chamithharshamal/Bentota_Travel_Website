@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, ArrowRight } from "lucide-react";
 
-interface DestinationItem {
+export interface DestinationItem {
   id: string;
   title: string;
   location: string;
@@ -14,12 +14,12 @@ interface DestinationItem {
   rating?: number;
 }
 
-const DESTINATIONS: DestinationItem[] = [
+export const ALL_DESTINATIONS: DestinationItem[] = [
   {
     id: "sigiriya",
     title: "SIGIRIYA ROCK",
     location: "SIGIRIYA",
-    description: "Ancient rock fortress with royal palace ruins, water gardens, and panoramic jungle views.",
+    description: "Ancient 5th-century rock citadel with royal palace ruins, water gardens, and panoramic 360° jungle views.",
     image: "/images/dest-sigiriya.webp",
     href: "/destinations",
     rating: 5,
@@ -28,7 +28,7 @@ const DESTINATIONS: DestinationItem[] = [
     id: "ella",
     title: "NINE ARCH BRIDGE",
     location: "ELLA",
-    description: "Iconic colonial-era railway bridge nestled amidst misty tea plantation hills and tropical forest.",
+    description: "Iconic colonial railway bridge framed by mist-veiled Ceylon tea plantations and cascading waterfalls.",
     image: "/images/dest-ella.webp",
     href: "/destinations",
     rating: 5,
@@ -37,16 +37,82 @@ const DESTINATIONS: DestinationItem[] = [
     id: "bentota",
     title: "BENTOTA BEACH",
     location: "BENTOTA",
-    description: "Golden sandy shores, coconut palm groves, and thrilling water sports on Sri Lanka's south coast.",
+    description: "Golden sandy south-coast shores, tranquil lagoon mangrove boat safaris, and marine sea turtle hatcheries.",
     image: "/images/dest-bentota.webp",
+    href: "/destinations",
+    rating: 5,
+  },
+  {
+    id: "galle",
+    title: "GALLE DUTCH FORT",
+    location: "GALLE",
+    description: "UNESCO World Heritage ocean fortress with 17th-century ramparts, iconic lighthouse, and cobblestone lanes.",
+    image: "/images/gal-lighthouse.webp",
+    href: "/destinations",
+    rating: 5,
+  },
+  {
+    id: "yala",
+    title: "YALA SAFARI",
+    location: "YALA",
+    description: "World-famous national park renowned for wild Asian elephants, leopards, sloth bears, and exotic birds.",
+    image: "/images/elephant.webp",
+    href: "/destinations",
+    rating: 5,
+  },
+  {
+    id: "kandy",
+    title: "TEMPLE OF THE TOOTH",
+    location: "KANDY",
+    description: "Sacred royal palace complex cradling the sacred relic of the tooth of Buddha amidst misty highland hills.",
+    image: "/images/gal-mountain.webp",
+    href: "/destinations",
+    rating: 5,
+  },
+  {
+    id: "mirissa",
+    title: "MIRISSA & COCONUT HILL",
+    location: "MIRISSA",
+    description: "Vibrant tropical bay famous for whale watching cruises, surf breaks, and scenic palm-crowned ocean cliffs.",
+    image: "/images/gal-beach.webp",
+    href: "/destinations",
+    rating: 5,
+  },
+  {
+    id: "nuwara-eliya",
+    title: "NUWARA ELIYA & TEA",
+    location: "NUWARA ELIYA",
+    description: "Cool highland tea capital with lush emerald plantations, Ceylon tea factories, and colonial English heritage.",
+    image: "/images/train.webp",
     href: "/destinations",
     rating: 5,
   },
 ];
 
-export function PopularDestinationsSection() {
+interface PopularDestinationsSectionProps {
+  hideEyebrow?: boolean;
+  hideTitle?: boolean;
+  hideDescription?: boolean;
+  items?: DestinationItem[];
+  title?: string;
+  highlightTitle?: string;
+  className?: string;
+}
+
+export function PopularDestinationsSection({
+  hideEyebrow = false,
+  hideTitle = false,
+  hideDescription = false,
+  items,
+  title = "Popular",
+  highlightTitle = "Destinations",
+  className = "",
+}: PopularDestinationsSectionProps) {
+  const displayItems = items || ALL_DESTINATIONS.slice(0, 3);
+  const showHeader = !hideEyebrow || !hideTitle || !hideDescription;
+
   return (
-    <section className="relative isolate w-full bg-white text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
+    <section className={`relative isolate w-full bg-white text-[#061b2e] py-16 sm:py-24 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden ${className}`}>
       {/* Ambient background glow */}
       <div
         aria-hidden="true"
@@ -71,52 +137,60 @@ export function PopularDestinationsSection() {
         <p className="mr-4">Same Island</p>
       </div>
 
-      <div className="mx-auto w-[80%] relative z-10">
+      <div className="mx-auto w-[85%] max-w-[1530px] relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center">
-          {/* Subtitle tag with horizontal accent lines */}
-          <div className="flex items-center gap-3 mb-3">
-            <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-[#f5a623]" />
-            <span className="text-[#c97710] text-xs sm:text-sm font-extrabold tracking-[0.3em] uppercase">
-              Uncover Places
-            </span>
-            <span className="h-px w-10 sm:w-16 bg-gradient-to-l from-transparent to-[#f5a623]" />
+        {showHeader && (
+          <div className="flex flex-col items-center text-center">
+            {/* Optional Subtitle tag with horizontal accent lines */}
+            {!hideEyebrow && (
+              <div className="flex items-center gap-3 mb-3">
+                <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-[#f5a623]" />
+                <span className="text-[#c97710] text-xs sm:text-sm font-extrabold tracking-[0.3em] uppercase">
+                  Uncover Places
+                </span>
+                <span className="h-px w-10 sm:w-16 bg-gradient-to-l from-transparent to-[#f5a623]" />
+              </div>
+            )}
+
+            {/* Section Main Title */}
+            {!hideTitle && (
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-[#061b2e]">
+                {title}{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5a623] via-[#ffc107] to-[#e0951b]">
+                  {highlightTitle}
+                </span>
+              </h2>
+            )}
+
+            {/* Optional Subtitle description */}
+            {!hideDescription && (
+              <p className="mt-4 max-w-2xl text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                From cultural landmarks to hidden gems, explore the most loved places handpicked for your next journey.
+              </p>
+            )}
           </div>
-
-          {/* Section Main Title */}
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-[#061b2e]">
-            Popular{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5a623] via-[#ffc107] to-[#e0951b]">
-              Destinations
-            </span>
-          </h2>
-
-          {/* Subtitle description */}
-          <p className="mt-4 max-w-2xl text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-            From cultural landmarks to hidden gems, explore the most loved places handpicked for your next journey.
-          </p>
-        </div>
+        )}
 
         {/* Cards Grid */}
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {DESTINATIONS.map((item) => (
+        <div className={`${showHeader ? "mt-12 sm:mt-14" : "mt-0"} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8`}>
+          {displayItems.map((item) => (
             <div
               key={item.id}
-              className="group relative rounded-3xl overflow-hidden bg-[#061b2e] border border-slate-200 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.18)] hover:border-[#f5a623]/50 flex flex-col justify-end min-h-[370px] sm:min-h-[400px]"
+              className="group relative rounded-3xl overflow-hidden bg-[#061b2e] border border-slate-200 shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.18)] hover:border-[#f5a623]/50 flex flex-col justify-end min-h-[380px] sm:min-h-[410px]"
             >
               {/* Card Image */}
               <Image
                 src={item.image}
                 alt={item.title}
                 fill
-                sizes="(max-width: 768px) 100vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover object-center w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out"
               />
 
               {/* Gradient overlay inside card for readability */}
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#051726] via-[#051726]/60 to-transparent z-10"
+                className="absolute inset-0 bg-gradient-to-t from-[#051726] via-[#051726]/65 to-transparent z-10"
               />
 
               {/* Card Bottom Content */}
@@ -135,10 +209,10 @@ export function PopularDestinationsSection() {
                 {/* Title, Description & Action Button Row */}
                 <div className="mt-3 flex items-end justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold uppercase text-white tracking-tight leading-none group-hover:text-[#f5a623] transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-extrabold uppercase text-white tracking-tight leading-tight group-hover:text-[#f5a623] transition-colors">
                       {item.title}
                     </h3>
-                    <p className="mt-2 text-sm text-white/85 line-clamp-2 leading-relaxed font-normal">
+                    <p className="mt-2 text-xs sm:text-sm text-white/85 line-clamp-2 leading-relaxed font-normal">
                       {item.description}
                     </p>
                   </div>

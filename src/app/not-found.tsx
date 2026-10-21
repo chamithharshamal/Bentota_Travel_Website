@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="text-ocean-950/70">The link may be old, or the tour may no longer be offered.</p>
       <div className="flex gap-3">
         <LinkButton href="/">Go to the home page</LinkButton>
-        <LinkButton href="/book" variant="outline">Book a trip</LinkButton>
+        <LinkButton href="/packages" variant="outline">Book a trip</LinkButton>
       </div>
     </main>
   );

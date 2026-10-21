@@ -81,7 +81,8 @@ export function MomentsFromTravellersSection() {
   };
 
   return (
-    <section className="relative isolate w-full bg-white text-[#061b2e] py-20 sm:py-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
+    <section id="gallery" aria-label="Moments From Our Travellers" className="relative isolate w-full bg-white text-[#061b2e] py-20 sm:py-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden scroll-mt-10">
+      <div id="travellers-gallery" className="absolute top-0 -mt-24 pointer-events-none" />
       {/* Ambient background glow */}
       <div
         aria-hidden="true"

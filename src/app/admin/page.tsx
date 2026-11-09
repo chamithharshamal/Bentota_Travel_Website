@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { collection, limit, orderBy, query, where } from "firebase/firestore";
 import { canManageBookings, canManageContent, useAuth } from "@/components/admin/auth-provider";
-import { useDestinations, useLiveQuery, useMediaLibrary, usePackages, useRoutes } from "@/components/admin/hooks";
+import { useBookings, useDestinations, useMediaLibrary, usePackages, useRoutes } from "@/components/admin/hooks";
 import { BookingTable } from "@/components/admin/booking-table";
 import { EmptyState, PageHeader, Spinner } from "@/components/ui/misc";
 import { addDays, colomboToday, formatTripDate } from "@/lib/dates";
-import { clientDb } from "@/lib/firebase/client";
-import type { Booking } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
@@ -33,21 +30,15 @@ function Stat({ label, value, href, highlight }: { label: string; value: number;
       )}
     >
       <p className="font-display text-4xl font-bold tabular-nums">{value}</p>
-      <p className={cn("mt-1 text-sm", highlight ? "text-ocean-950" : "text-ocean-950/65")}>{label}</p>
+      <p className={cn("mt-1 text-sm", highlight ? "text-ocean-950 font-medium" : "text-ocean-950/65")}>{label}</p>
     </Link>
   );
 }
 
 function BookingOverview() {
   const today = colomboToday();
-  const newBookings = useLiveQuery<Booking>(
-    () => query(collection(clientDb(), "bookings"), where("status", "==", "new")),
-    [],
-  );
-  const upcoming = useLiveQuery<Booking>(
-    () => query(collection(clientDb(), "bookings"), where("date", ">=", today), orderBy("date"), limit(100)),
-    [today],
-  );
+  const newBookings = useBookings({ status: "new" });
+  const upcoming = useBookings({ minDate: today, limit: 100 });
 
   const priority = useMemo(
     () => newBookings.data.filter((b) => b.isForeign).sort((a, b) => b.createdAt - a.createdAt),

@@ -3,15 +3,13 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { collection, limit, orderBy, query } from "firebase/firestore";
 import { RequireRole } from "@/components/admin/admin-shell";
-import { useLiveQuery } from "@/components/admin/hooks";
+import { useBookings } from "@/components/admin/hooks";
 import { STATUS_LABEL } from "@/components/admin/status";
 import { Button } from "@/components/ui/button";
 import { Checkbox, Input, Select } from "@/components/ui/form";
 import { Alert, EmptyState, PageHeader, Spinner } from "@/components/ui/misc";
 import { addDays, colomboToday } from "@/lib/dates";
-import { clientDb } from "@/lib/firebase/client";
 import { BOOKING_STATUSES, type Booking } from "@/lib/types";
 import { BookingTable } from "@/components/admin/booking-table";
 
@@ -32,10 +30,7 @@ function BookingsList() {
   const preset = params.get("filter");
   const today = colomboToday();
   const [max, setMax] = useState(PAGE);
-  const { data, loading, error } = useLiveQuery<Booking>(
-    () => query(collection(clientDb(), "bookings"), orderBy("createdAt", "desc"), limit(max)),
-    [max],
-  );
+  const { data, loading, error } = useBookings({ limit: max });
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(preset === "new" || preset === "priority" ? "new" : "");

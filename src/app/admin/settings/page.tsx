@@ -11,6 +11,8 @@ import { Field, Input, Textarea } from "@/components/ui/form";
 import { Alert, PageHeader, Spinner } from "@/components/ui/misc";
 import { apiFetch, errorMessage } from "@/lib/api-client";
 import { DEFAULT_SETTINGS } from "@/lib/defaults";
+import { getDemoDoc, isDemoMode } from "@/lib/demo-store";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import type { SiteSettings } from "@/lib/types";
 import { linesToList, listToLines } from "@/lib/utils";
 
@@ -31,6 +33,12 @@ function SettingsForm() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isDemoMode() || !isFirebaseClientConfigured) {
+      const s = getDemoDoc<SiteSettings>("settings", "site") ?? (DEFAULT_SETTINGS as SiteSettings);
+      const { updatedAt: _u, ...rest } = s;
+      setForm({ ...rest, adminSmsNumbers: listToLines(s.adminSmsNumbers || []) });
+      return;
+    }
     getDoc(docRef("settings", "site"))
       .then((snap) => {
         const s = { ...DEFAULT_SETTINGS, ...(snap.data() as Partial<SiteSettings> | undefined) };

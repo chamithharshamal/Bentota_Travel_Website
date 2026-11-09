@@ -13,15 +13,18 @@ import {
   MapPin,
   Menu,
   Package,
+  RotateCcw,
   Route as RouteIcon,
   Settings,
+  Sparkles,
   Users,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 import { LogoMark } from "@/components/site/logo";
-import { clientDb } from "@/lib/firebase/client";
+import { clientDb, isFirebaseClientConfigured } from "@/lib/firebase/client";
+import { getDemoCollection, isDemoMode, resetDemoStore, subscribeDemoStore } from "@/lib/demo-store";
 import type { Booking, NotificationItem, Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { canManageBookings, useAuth } from "./auth-provider";
@@ -57,7 +60,7 @@ interface Toast {
 }
 
 export function AdminShell({ children }: { children: ReactNode }) {
-  const { user, role, signOut } = useAuth();
+  const { user, role, isDemo, setDemoRole, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -85,38 +88,68 @@ export function AdminShell({ children }: { children: ReactNode }) {
   // Real-time new booking alerts.
   useEffect(() => {
     if (!bookingsAllowed) return;
-    const q = query(collection(clientDb(), "bookings"), where("status", "==", "new"));
-    return onSnapshot(q, (snap) => {
-      setNewCount(snap.size);
-      setPriorityCount(snap.docs.filter((d) => d.get("isForeign")).length);
 
-      const fresh = snap
-        .docChanges()
-        .filter((c) => c.type === "added" && (c.doc.get("createdAt") as number) > mountedAt.current - 5000)
-        .map((c) => ({ id: c.doc.id, ...c.doc.data() }) as Booking);
-      if (!fresh.length) return;
+    if (isDemoMode() || !isFirebaseClientConfigured) {
+      const updateDemoCounts = () => {
+        const bookings = getDemoCollection<Booking>("bookings");
+        const newOnes = bookings.filter((b) => b.status === "new");
+        setNewCount(newOnes.length);
+        setPriorityCount(newOnes.filter((b) => b.isForeign).length);
+      };
+      updateDemoCounts();
+      return subscribeDemoStore(updateDemoCounts);
+    }
 
-      const booking = fresh.find((b) => b.isForeign) ?? fresh[0]!;
-      const title = booking.isForeign ? `Priority booking ${booking.ref}` : `New booking ${booking.ref}`;
-      const body = `${booking.traveler.name} (${booking.traveler.nationality}) · ${booking.route.name}`;
-      if (soundRef.current) playChime(booking.isForeign);
-      showDesktopNotification(title, body, () => router.push(`/admin/bookings/${booking.id}`));
-      setToast({ bookingId: booking.id, title, body, priority: booking.isForeign });
-    });
+    try {
+      const q = query(collection(clientDb(), "bookings"), where("status", "==", "new"));
+      return onSnapshot(q, (snap) => {
+        setNewCount(snap.size);
+        setPriorityCount(snap.docs.filter((d) => d.get("isForeign")).length);
+
+        const fresh = snap
+          .docChanges()
+          .filter((c) => c.type === "added" && (c.doc.get("createdAt") as number) > mountedAt.current - 5000)
+          .map((c) => ({ id: c.doc.id, ...c.doc.data() }) as Booking);
+        if (!fresh.length) return;
+
+        const booking = fresh.find((b) => b.isForeign) ?? fresh[0]!;
+        const title = booking.isForeign ? `Priority booking ${booking.ref}` : `New booking ${booking.ref}`;
+        const body = `${booking.traveler.name} (${booking.traveler.nationality}) · ${booking.route.name}`;
+        if (soundRef.current) playChime(booking.isForeign);
+        showDesktopNotification(title, body, () => router.push(`/admin/bookings/${booking.id}`));
+        setToast({ bookingId: booking.id, title, body, priority: booking.isForeign });
+      });
+    } catch {
+      return undefined;
+    }
   }, [bookingsAllowed, router]);
 
   // Unread notification count.
   useEffect(() => {
     if (!bookingsAllowed || !user) return;
-    const q = query(collection(clientDb(), "notifications"), orderBy("createdAt", "desc"), limit(100));
-    return onSnapshot(q, (snap) => {
-      setUnread(
-        snap.docs.filter((d) => {
-          const n = d.data() as NotificationItem;
-          return n.channel === "dashboard" && !n.readBy?.includes(user.uid);
-        }).length,
-      );
-    });
+
+    if (isDemoMode() || !isFirebaseClientConfigured) {
+      const updateDemoUnread = () => {
+        const notifs = getDemoCollection<NotificationItem>("notifications");
+        setUnread(notifs.filter((n) => n.channel === "dashboard" && !n.readBy?.includes(user.uid)).length);
+      };
+      updateDemoUnread();
+      return subscribeDemoStore(updateDemoUnread);
+    }
+
+    try {
+      const q = query(collection(clientDb(), "notifications"), orderBy("createdAt", "desc"), limit(100));
+      return onSnapshot(q, (snap) => {
+        setUnread(
+          snap.docs.filter((d) => {
+            const n = d.data() as NotificationItem;
+            return n.channel === "dashboard" && !n.readBy?.includes(user.uid);
+          }).length,
+        );
+      });
+    } catch {
+      return undefined;
+    }
   }, [bookingsAllowed, user]);
 
   useEffect(() => {
@@ -172,10 +205,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
         })}
       </ul>
       <div className="border-t border-white/10 p-4 text-sm text-white/70">
-        <p className="truncate text-white">{user?.email}</p>
-        <p className="text-xs">{role ? ROLE_LABEL[role] : ""}</p>
-        <button type="button" onClick={() => signOut()} className="mt-3 inline-flex items-center gap-2 hover:text-white">
-          <LogOut className="size-4" /> Sign out
+        <p className="truncate text-white font-medium">{user?.email}</p>
+        <p className="text-xs text-white/60">{role ? ROLE_LABEL[role] : ""}</p>
+        <button type="button" onClick={() => signOut()} className="mt-3 inline-flex items-center gap-2 hover:text-white text-xs">
+          <LogOut className="size-3.5" /> Sign out
         </button>
       </div>
     </nav>
@@ -194,7 +227,45 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <div className="min-w-0">
+      <div className="min-w-0 flex flex-col">
+        {/* Demo Mode Top Banner */}
+        {isDemo && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sun-400 bg-sun-300 px-4 py-2 text-xs text-ocean-950 sm:px-6">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded bg-ocean-950 px-1.5 py-0.5 font-bold text-[10px] text-white uppercase tracking-wider">
+                <Sparkles className="size-3" /> Demo Mode
+              </span>
+              <span>Firebase is not connected. You are exploring with sample data in local memory.</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-1.5 font-medium">
+                <span>View role:</span>
+                <select
+                  value={role ?? "admin"}
+                  onChange={(e) => setDemoRole(e.target.value as Role)}
+                  className="rounded border border-ocean-950/20 bg-white px-2 py-0.5 text-xs font-semibold text-ocean-950 shadow-sm focus:outline-none"
+                >
+                  <option value="admin">Admin (All tabs)</option>
+                  <option value="editor">Content editor</option>
+                  <option value="agent">Booking agent</option>
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm("Reset all demo data back to default sample items?")) {
+                    resetDemoStore();
+                  }
+                }}
+                className="inline-flex items-center gap-1 font-semibold text-ocean-900 underline hover:text-ocean-950"
+                title="Reset sample bookings, destinations and settings"
+              >
+                <RotateCcw className="size-3" /> Reset demo data
+              </button>
+            </div>
+          </div>
+        )}
+
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-ocean-900/10 bg-white/95 px-4 backdrop-blur sm:px-6">
           <button type="button" className="rounded-lg p-2 lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -231,7 +302,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             )}
           </div>
         </header>
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">{children}</main>
       </div>
 
       {toast && (
@@ -270,7 +341,9 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
     return (
       <div className="rounded-xl border border-ocean-900/10 bg-white p-8">
         <h1 className="text-xl font-bold">You do not have access to this page</h1>
-        <p className="mt-2 text-sm text-ocean-950/70">Ask an admin to change your role if you need it.</p>
+        <p className="mt-2 text-sm text-ocean-950/70">
+          Your current preview role is <strong>{role ?? "none"}</strong>. Use the role switcher in the top banner to change to an authorized role.
+        </p>
       </div>
     );
   }

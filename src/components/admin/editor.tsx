@@ -6,17 +6,30 @@ import { getDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Alert, Card } from "@/components/ui/misc";
 import { apiFetch, errorMessage } from "@/lib/api-client";
+import { getDemoDoc, isDemoMode } from "@/lib/demo-store";
 import { docRef } from "./hooks";
 
 /** Loads a document once (not live), so edits in progress are never overwritten. */
 export function useDocOnce<T>(collection: string, id: string) {
   const isNew = id === "new";
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(!isNew);
+  const [data, setData] = useState<T | null>(() => {
+    if (isDemoMode() && !isNew) {
+      return getDemoDoc<T>(collection, id);
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(!isNew && !isDemoMode());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isNew) return;
+    if (isDemoMode()) {
+      const item = getDemoDoc<T>(collection, id);
+      if (!item) setError("This item does not exist. It may have been deleted.");
+      else setData(item);
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     getDoc(docRef(collection, id))
       .then((snap) => {

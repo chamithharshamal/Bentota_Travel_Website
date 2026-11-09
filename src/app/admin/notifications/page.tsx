@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { collection, limit, orderBy, query } from "firebase/firestore";
 import { RequireRole } from "@/components/admin/admin-shell";
 import { useAuth } from "@/components/admin/auth-provider";
-import { useLiveQuery } from "@/components/admin/hooks";
+import { useNotifications } from "@/components/admin/hooks";
 import { Button } from "@/components/ui/button";
 import { Alert, Badge, Card, EmptyState, PageHeader, Spinner } from "@/components/ui/misc";
 import { apiFetch, errorMessage } from "@/lib/api-client";
 import { formatDateTime } from "@/lib/dates";
-import { clientDb } from "@/lib/firebase/client";
 import type { NotificationItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -25,10 +23,7 @@ export default function NotificationsPage() {
 function Notifications() {
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
-  const { data, loading } = useLiveQuery<NotificationItem>(
-    () => query(collection(clientDb(), "notifications"), orderBy("createdAt", "desc"), limit(200)),
-    [],
-  );
+  const { data, loading } = useNotifications(200);
 
   const uid = user?.uid ?? "";
   const unread = data.filter((n) => n.channel === "dashboard" && !n.readBy?.includes(uid));

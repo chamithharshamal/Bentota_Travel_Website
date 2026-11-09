@@ -29,7 +29,11 @@ export default function BookingDetailPage() {
 function BookingDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const { data: booking, loading, error } = useLiveDoc<Booking>(() => docRef("bookings", id), [id]);
+  const { data: booking, loading, error } = useLiveDoc<Booking>(
+    () => docRef("bookings", id),
+    [id],
+    { collection: "bookings", id },
+  );
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);

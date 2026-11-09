@@ -2,12 +2,13 @@ import "server-only";
 import { cache } from "react";
 import { adminDb, isFirebaseAdminConfigured } from "../firebase/admin";
 import { DEFAULT_SETTINGS } from "../defaults";
+import { DEMO_DESTINATIONS, DEMO_PACKAGES, DEMO_ROUTES, DEMO_SETTINGS } from "../demo-data";
 import type { Destination, MediaAsset, MediaLite, SiteSettings, TourPackage, TourRoute } from "../types";
 import { unique } from "../utils";
 
 /**
  * Read-only data access for the public website.
- * Every function fails soft (returns empty data) so pages still render
+ * Every function fails soft (returns demo/sample data) so pages still render
  * before Firebase is configured or while seeding.
  */
 async function safely<T>(label: string, fallback: T, fn: () => Promise<T>): Promise<T> {
@@ -25,14 +26,14 @@ function bySortOrder<T extends { sortOrder: number }>(key: (item: T) => string) 
 }
 
 export const getSettings = cache(async (): Promise<SiteSettings> =>
-  safely("getSettings", { ...DEFAULT_SETTINGS, updatedAt: 0 }, async () => {
+  safely("getSettings", DEMO_SETTINGS, async () => {
     const snap = await adminDb().collection("settings").doc("site").get();
     return { ...DEFAULT_SETTINGS, updatedAt: 0, ...(snap.data() as Partial<SiteSettings> | undefined) };
   }),
 );
 
 export const getPublishedDestinations = cache(async (): Promise<Destination[]> =>
-  safely("getPublishedDestinations", [], async () => {
+  safely("getPublishedDestinations", DEMO_DESTINATIONS, async () => {
     const snap = await adminDb().collection("destinations").where("status", "==", "published").get();
     return snap.docs
       .map((d) => ({ id: d.id, ...d.data() }) as Destination)
@@ -41,14 +42,14 @@ export const getPublishedDestinations = cache(async (): Promise<Destination[]> =
 );
 
 export const getActiveRoutes = cache(async (): Promise<TourRoute[]> =>
-  safely("getActiveRoutes", [], async () => {
+  safely("getActiveRoutes", DEMO_ROUTES, async () => {
     const snap = await adminDb().collection("routes").where("status", "==", "active").get();
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as TourRoute).sort(bySortOrder((r) => r.name));
   }),
 );
 
 export const getPublishedPackages = cache(async (): Promise<TourPackage[]> =>
-  safely("getPublishedPackages", [], async () => {
+  safely("getPublishedPackages", DEMO_PACKAGES, async () => {
     const snap = await adminDb().collection("packages").where("status", "==", "published").get();
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as TourPackage).sort(bySortOrder((p) => p.title));
   }),

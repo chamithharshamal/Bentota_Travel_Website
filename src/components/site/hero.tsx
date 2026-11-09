@@ -30,7 +30,7 @@ const STATS: StatItem[] = [
     targetValue: 12500,
     suffix: "+",
     label: "HAPPY TRAVELERS",
-    description: "Guests from 40+ countries discovering Sri Lanka with us.",
+    description: "From 40+ countries",
   },
   {
     id: "stops",
@@ -38,7 +38,7 @@ const STATS: StatItem[] = [
     targetValue: 50,
     suffix: "+",
     label: "CURATED STOPS",
-    description: "Beaches, tea plantations & UNESCO heritage sites.",
+    description: "Island-wide heritage & nature",
   },
   {
     id: "rating",
@@ -47,17 +47,73 @@ const STATS: StatItem[] = [
     suffix: " / 5",
     decimals: 1,
     label: "GUEST RATING",
-    description: "Over 1,800+ 5-star reviews on TripAdvisor & Google.",
+    description: "Over 1,800+ 5-star reviews",
   },
   {
     id: "routes",
     icon: Route,
     targetValue: 100,
     suffix: "%",
-    label: "TAILORED ROUTES",
-    description: "Fully customizable itineraries with private chauffeurs.",
+    label: "PRIVATE TOURS",
+    description: "Door-to-door comfort",
   },
 ];
+
+function MobileStatItem({ stat }: { stat: StatItem }) {
+  const [currentValue, setCurrentValue] = useState(0);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    const duration = 1400; // ms
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const val = easeProgress * stat.targetValue;
+      setCurrentValue(val);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        setCurrentValue(stat.targetValue);
+      }
+    };
+
+    const frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [stat.targetValue]);
+
+  const formattedNumber = stat.decimals
+    ? currentValue.toFixed(stat.decimals)
+    : Math.floor(currentValue).toLocaleString();
+
+  return (
+    <div className="flex flex-col items-center text-center px-1">
+      <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none">
+        {stat.id === "rating" ? (
+          <>
+            {formattedNumber} <span className="text-white">/</span> <span className="text-[#f5a623]">5</span>
+          </>
+        ) : (
+          <>
+            {formattedNumber}
+            <span className="text-[#f5a623]">{stat.suffix}</span>
+          </>
+        )}
+      </div>
+
+      <h3 className="mt-2 text-xs font-extrabold text-white tracking-wider uppercase leading-tight">
+        {stat.label}
+      </h3>
+
+      <p className="mt-1 text-[11px] sm:text-xs text-white/70 leading-relaxed font-normal">
+        {stat.description}
+      </p>
+    </div>
+  );
+}
 
 function StatItemRow({ 
   stat, 
@@ -108,8 +164,16 @@ function StatItemRow({
       {/* Text Block */}
       <div className="min-w-0 flex-1">
         <div className="text-2xl sm:text-3xl lg:text-[1.85rem] xl:text-3xl font-extrabold text-white tracking-tight leading-none">
-          {formattedNumber}
-          <span className="text-[#f5a623]">{stat.suffix}</span>
+          {stat.id === "rating" ? (
+            <>
+              {formattedNumber} <span className="text-white">/</span> <span className="text-[#f5a623]">5</span>
+            </>
+          ) : (
+            <>
+              {formattedNumber}
+              <span className="text-[#f5a623]">{stat.suffix}</span>
+            </>
+          )}
         </div>
 
         <h3 className="mt-1.5 text-xs sm:text-sm font-extrabold text-white tracking-wider uppercase leading-tight">
@@ -344,9 +408,18 @@ export function HeroSection() {
 
         </div>
 
-        {/* Unified Single Glassmorphic Stat Bar Card (Separated into 4) */}
-        <div className="mt-12 sm:mt-16 w-full rounded-3xl border border-white/15 bg-[#061e32]/65 backdrop-blur-xl p-6 sm:p-7 lg:p-7 xl:p-8 shadow-2xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-white/15">
+        {/* Mobile View: 2x2 Grid matching reference screenshot */}
+        <div className="block md:hidden mt-10 -mx-6 w-[calc(100%+3rem)] bg-[#051726]/95 border-y border-white/10 px-6 py-8">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+            {STATS.map((stat) => (
+              <MobileStatItem key={stat.id} stat={stat} />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop / Tablet View: Glassmorphic Stat Bar */}
+        <div className="hidden md:block mt-12 sm:mt-16 w-full rounded-3xl border border-white/15 bg-[#061e32]/65 backdrop-blur-xl p-6 sm:p-7 lg:p-7 xl:p-8 shadow-2xl">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x lg:divide-white/15">
             {STATS.map((stat, idx) => (
               <StatItemRow 
                 key={stat.id} 

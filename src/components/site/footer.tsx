@@ -29,8 +29,8 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         <div>
           <h2 className="text-base font-semibold text-sun-500">Contact</h2>
           <ul className="mt-3 space-y-2 text-base text-white/80">
-            {settings.contactPhone && <li><a href={`tel:${settings.contactPhone}`} className="hover:text-white">{settings.contactPhone}</a></li>}
-            {settings.contactEmail && <li><a href={`mailto:${settings.contactEmail}`} className="hover:text-white">{settings.contactEmail}</a></li>}
+            {settings.contactPhone && <li><a href={`tel:${settings.contactPhone}`} className="hover:text-white break-all">{settings.contactPhone}</a></li>}
+            {settings.contactEmail && <li><a href={`mailto:${settings.contactEmail}`} className="hover:text-white break-all">{settings.contactEmail}</a></li>}
             {wa && <li><a href={wa} target="_blank" rel="noreferrer" className="hover:text-white">Chat on WhatsApp</a></li>}
             <li><Link href="/privacy" className="hover:text-white">Privacy notice</Link></li>
           </ul>

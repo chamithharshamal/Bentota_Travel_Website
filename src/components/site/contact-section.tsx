@@ -88,23 +88,23 @@ export function ContactUsSection() {
           <div className="lg:col-span-5 flex flex-col gap-6">
 
             {/* Quick Contact Cards */}
-            <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xl flex flex-col gap-6">
+            <div className="rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-8 shadow-xl flex flex-col gap-6">
               <h3 className="text-xl font-bold uppercase tracking-wide text-[#061b2e] flex items-center gap-2">
                 <Sparkles className="size-5 text-[#f5a623]" /> Direct Channels
               </h3>
 
               {/* Phone & WhatsApp */}
-              <div className="flex items-start gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-[#f5a623] shrink-0">
-                  <MessageCircle className="size-6" />
+              <div className="flex items-start gap-3.5 sm:gap-4">
+                <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-[#f5a623] shrink-0">
+                  <MessageCircle className="size-5 sm:size-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Phone &amp; WhatsApp</p>
                   <a
                     href="https://wa.me/94771234567"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-lg font-bold text-[#061b2e] hover:text-[#f5a623] transition-colors mt-0.5 block"
+                    className="text-base sm:text-lg font-bold text-[#061b2e] hover:text-[#f5a623] transition-colors mt-0.5 block truncate"
                   >
                     +94 77 123 4567
                   </a>
@@ -113,15 +113,15 @@ export function ContactUsSection() {
               </div>
 
               {/* Email */}
-              <div className="flex items-start gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-slate-100 border border-slate-200 text-[#061b2e] shrink-0">
-                  <Mail className="size-6" />
+              <div className="flex items-start gap-3.5 sm:gap-4">
+                <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-slate-100 border border-slate-200 text-[#061b2e] shrink-0">
+                  <Mail className="size-5 sm:size-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Email Support</p>
                   <a
                     href="mailto:info@bentotasmartjourneys.com"
-                    className="text-lg font-bold text-[#061b2e] hover:text-[#f5a623] transition-colors mt-0.5 block"
+                    className="text-sm sm:text-base lg:text-lg font-bold text-[#061b2e] hover:text-[#f5a623] transition-colors mt-0.5 block break-all"
                   >
                     info@bentotasmartjourneys.com
                   </a>
@@ -130,13 +130,13 @@ export function ContactUsSection() {
               </div>
 
               {/* Hotel Pickup Location */}
-              <div className="flex items-start gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-[#f5a623] shrink-0">
-                  <MapPin className="size-6 text-[#f5a623]" />
+              <div className="flex items-start gap-3.5 sm:gap-4">
+                <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-[#f5a623] shrink-0">
+                  <MapPin className="size-5 sm:size-6 text-[#f5a623]" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Pickup Area</p>
-                  <p className="text-base font-bold text-[#061b2e] mt-0.5">
+                  <p className="text-sm sm:text-base font-bold text-[#061b2e] mt-0.5 leading-snug">
                     Bentota, Beruwala, Induruwa &amp; South Coast
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">Free hotel pickup &amp; drop-off included</p>
@@ -144,13 +144,13 @@ export function ContactUsSection() {
               </div>
 
               {/* Hours */}
-              <div className="flex items-start gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-slate-100 border border-slate-200 text-[#061b2e] shrink-0">
-                  <Clock className="size-6" />
+              <div className="flex items-start gap-3.5 sm:gap-4">
+                <div className="flex size-11 sm:size-12 items-center justify-center rounded-2xl bg-slate-100 border border-slate-200 text-[#061b2e] shrink-0">
+                  <Clock className="size-5 sm:size-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Operating Hours</p>
-                  <p className="text-base font-bold text-[#061b2e] mt-0.5">
+                  <p className="text-sm sm:text-base font-bold text-[#061b2e] mt-0.5">
                     Everyday: 6:00 AM – 10:00 PM
                   </p>
                 </div>

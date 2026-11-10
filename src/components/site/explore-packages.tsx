@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Clock, Users, ArrowRight } from "lucide-react";
+import { MapPin, Clock, Users, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { RouteMapPopup, type RouteMapPackageData } from "./route-map-popup";
+import { cn } from "@/lib/utils";
 
 // --- Custom Highlight Icons ---
 
@@ -171,7 +172,41 @@ const PACKAGES: PackageItem[] = [
 
 export function ExplorePackagesSection({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   const [activePackageId, setActivePackageId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const activePackage = PACKAGES.find((p) => p.id === activePackageId);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, clientWidth } = scrollRef.current;
+    if (clientWidth === 0) return;
+    const index = Math.round(scrollLeft / (clientWidth * 0.8));
+    setActiveIndex(Math.min(Math.max(index, 0), PACKAGES.length - 1));
+  };
+
+  const scrollToSlide = (index: number) => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const cards = container.children;
+    if (cards[index]) {
+      (cards[index] as HTMLElement).scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+    setActiveIndex(index);
+  };
+
+  const handlePrev = () => {
+    const prev = activeIndex > 0 ? activeIndex - 1 : 0;
+    scrollToSlide(prev);
+  };
+
+  const handleNext = () => {
+    const next = activeIndex < PACKAGES.length - 1 ? activeIndex + 1 : PACKAGES.length - 1;
+    scrollToSlide(next);
+  };
 
   return (
     <section className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-24 px-4 sm:px-8 lg:px-12 xl:px-16 overflow-hidden">
@@ -223,7 +258,7 @@ export function ExplorePackagesSection({ hideHeader = false }: { hideHeader?: bo
         <p className="text-xl xl:text-2xl">Always a Good Idea</p>
       </div>
 
-      <div className="mx-auto w-[80%] relative z-10">
+      <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] lg:w-[80%] relative z-10">
         {/* Section Header */}
         {!hideHeader && (
           <div className="flex flex-col items-center text-center">
@@ -249,8 +284,218 @@ export function ExplorePackagesSection({ hideHeader = false }: { hideHeader?: bo
           </div>
         )}
 
-        {/* Two Packages Stack */}
-        <div className={`${hideHeader ? "mt-4 sm:mt-6" : "mt-12 sm:mt-14"} flex flex-col gap-8 sm:gap-10`}>
+        {/* ==================================================== */}
+        {/* MOBILE VIEW: Interactive Slide Carousel with 1, 2   */}
+        {/* Numbering at the top (md:hidden)                     */}
+        {/* ==================================================== */}
+        <div className="block md:hidden mt-8">
+          {/* Top 1, 2 Numbered Controls & Slide Arrows */}
+          <div className="flex items-center justify-between gap-2 mb-5 px-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                Package:
+              </span>
+              <div className="flex items-center gap-2">
+                {PACKAGES.map((pkg, idx) => {
+                  const active = activeIndex === idx;
+                  return (
+                    <button
+                      key={pkg.id}
+                      type="button"
+                      onClick={() => scrollToSlide(idx)}
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs",
+                        active
+                          ? "bg-[#061b2e] text-white ring-2 ring-[#f5a623]"
+                          : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                      )}
+                      aria-label={`View Package ${idx + 1}: ${pkg.title}`}
+                      aria-current={active ? "true" : undefined}
+                    >
+                      <span
+                        className={cn(
+                          "flex size-5 items-center justify-center rounded-full font-black text-xs",
+                          active ? "bg-[#f5a623] text-[#061b2e]" : "bg-slate-100 text-slate-700"
+                        )}
+                      >
+                        {idx + 1}
+                      </span>
+                      <span className="font-extrabold">
+                        {idx === 0 ? "1 Day" : "2 Days"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Previous & Next Arrow Buttons */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={activeIndex === 0}
+                className="flex size-8 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-700 shadow-xs transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none hover:border-[#f5a623]"
+                aria-label="Previous package"
+              >
+                <ChevronLeft className="size-4 stroke-[2.5]" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={activeIndex === PACKAGES.length - 1}
+                className="flex size-8 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-700 shadow-xs transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none hover:border-[#f5a623]"
+                aria-label="Next package"
+              >
+                <ChevronRight className="size-4 stroke-[2.5]" />
+              </button>
+            </div>
+          </div>
+
+          {/* Swipeable Slide Container */}
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none py-2 px-1"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="snap-center shrink-0 w-[88vw] max-w-[390px] rounded-3xl bg-white border border-slate-200/90 shadow-xl p-4 sm:p-5 flex flex-col justify-between overflow-visible group"
+              >
+                <div>
+                  {/* Image & Badges */}
+                  <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden shrink-0">
+                    <Image
+                      src={pkg.image}
+                      alt={pkg.title}
+                      fill
+                      sizes="(max-width: 768px) 88vw, 390px"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none" />
+
+                    {/* Region Pill */}
+                    <div className="absolute bottom-3 left-3 z-10">
+                      <Link
+                        href={pkg.href}
+                        className="inline-flex items-center gap-1.5 bg-[#061b2e]/90 hover:bg-[#061b2e] backdrop-blur-md text-white text-[11px] font-bold px-3 py-1.5 rounded-full shadow-md border border-white/10"
+                      >
+                        <MapPin className="size-3 text-[#f5a623]" />
+                        <span>{pkg.region}</span>
+                      </Link>
+                    </div>
+
+                    {/* Yellow Circle Badge Overlapping Top Right */}
+                    <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none">
+                      <div className="size-16 rounded-full bg-gradient-to-br from-[#ffce38] via-[#ffc107] to-[#f5a623] text-[#061b2e] flex flex-col items-center justify-center text-center shadow-lg border-2 border-white transform rotate-[-6deg]">
+                        <span className="text-[10px] font-black leading-none uppercase tracking-tight">
+                          {pkg.badgeLabel.line1}
+                        </span>
+                        <span className="text-[10px] font-black leading-none uppercase tracking-tight mt-0.5">
+                          {pkg.badgeLabel.line2}
+                        </span>
+                        <span className="text-[7px] font-bold tracking-widest text-[#061b2e]/80 uppercase mt-0.5">
+                          {pkg.badgeLabel.line3}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="mt-4">
+                    <span className="text-[#c97710] font-extrabold text-[10px] tracking-widest uppercase">
+                      {pkg.tagline}
+                    </span>
+                    <h3 className="text-xl font-extrabold text-[#061b2e] tracking-tight mt-0.5">
+                      {pkg.title}
+                    </h3>
+                    <p className="text-slate-600 text-xs leading-relaxed mt-1">
+                      {pkg.description}
+                    </p>
+
+                    {/* Key Info Specs */}
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] font-semibold text-slate-700 pt-2.5 border-t border-slate-100">
+                      <div className="flex items-center gap-1">
+                        <Clock className="size-3.5 text-[#f5a623]" />
+                        <span>{pkg.duration}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="size-3.5 text-[#f5a623]" />
+                        <span>{pkg.groupSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1 truncate max-w-[140px]">
+                        <MapPin className="size-3.5 text-[#f5a623] shrink-0" />
+                        <span className="truncate">{pkg.destinations}</span>
+                      </div>
+                    </div>
+
+                    {/* 4 Highlights Icons */}
+                    <div className="grid grid-cols-4 gap-1.5 text-center mt-3 pt-2.5 border-t border-slate-100">
+                      {pkg.highlights.map((item, hIdx) => {
+                        const Icon = item.icon;
+                        return (
+                          <div key={hIdx} className="flex flex-col items-center">
+                            <div className="size-9 rounded-full bg-[#fffbeb] border border-[#fde68a] flex items-center justify-center text-[#d97706]">
+                              <Icon className="size-3.5 text-[#d97706]" />
+                            </div>
+                            <span className="text-[9px] font-semibold text-slate-700 leading-tight mt-1 max-w-[65px] truncate">
+                              {item.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing & CTA */}
+                <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-medium text-slate-500 block leading-none">From</span>
+                    <div className="flex items-baseline gap-1 mt-0.5">
+                      <span className="text-2xl font-black text-[#061b2e] leading-none">
+                        ${pkg.price}
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-medium">/ person</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setActivePackageId(pkg.id)}
+                    className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#ffce38] via-[#ffc107] to-[#f5a623] hover:from-[#f5a623] hover:to-[#d97706] text-[#061b2e] font-extrabold text-xs px-4 py-2.5 rounded-full shadow-md active:scale-95 transition-all cursor-pointer"
+                  >
+                    <span>View Details</span>
+                    <ArrowRight className="size-3.5 stroke-[2.5]" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Dot Indicators */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {PACKAGES.map((pkg, idx) => (
+              <button
+                key={pkg.id}
+                type="button"
+                onClick={() => scrollToSlide(idx)}
+                aria-label={`Jump to package ${idx + 1}`}
+                className={cn(
+                  "h-1.5 rounded-full transition-all",
+                  activeIndex === idx ? "w-6 bg-[#f5a623]" : "w-2 bg-slate-300"
+                )}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ==================================================== */}
+        {/* DESKTOP / TABLET VIEW: Stacked Cards (hidden md:flex)*/}
+        {/* ==================================================== */}
+        <div className={`hidden md:flex flex-col ${hideHeader ? "mt-4 sm:mt-6" : "mt-12 sm:mt-14"} gap-8 sm:gap-10`}>
           {PACKAGES.map((pkg) => (
             <div
               key={pkg.id}

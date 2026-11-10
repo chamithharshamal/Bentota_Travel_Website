@@ -55,7 +55,7 @@ export default function AboutPage() {
       {/* ---------------------------------------------------- */}
       {/* 1. HERO BANNER                                       */}
       {/* ---------------------------------------------------- */}
-      <section className="relative isolate w-full bg-[#051726] text-white pt-32 sm:pt-40 lg:pt-44 pb-20 sm:pb-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
+      <section className="relative isolate w-full bg-[#051726] text-white pt-32 sm:pt-40 lg:pt-44 pb-20 sm:pb-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
         {/* Background Image with Dark Overlays */}
         <div className="absolute inset-0 -z-30 h-full w-full">
           <Image
@@ -84,7 +84,7 @@ export default function AboutPage() {
           Born in Bentota
         </div>
 
-        <div className="mx-auto w-[85%] max-w-[1530px] relative z-10">
+        <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] relative z-10">
           <div className="max-w-3xl">
             {/* Eyebrow Tag */}
             <div className="flex items-center gap-3 mb-4">
@@ -130,8 +130,8 @@ export default function AboutPage() {
       {/* ---------------------------------------------------- */}
       {/* 2. THE STORY BEHIND BENTOTA SMART JOURNEYS           */}
       {/* ---------------------------------------------------- */}
-      <section className="relative isolate w-full bg-white text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
-        <div className="mx-auto w-[85%] max-w-[1530px] relative z-10">
+      <section className="relative isolate w-full bg-white text-[#061b2e] py-20 sm:py-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden">
+        <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column: Narrative */}
@@ -217,8 +217,8 @@ export default function AboutPage() {
       {/* ---------------------------------------------------- */}
       {/* 3. CORE VALUES & PILLARS (LIGHT THEME)               */}
       {/* ---------------------------------------------------- */}
-      <section className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden border-y border-slate-200/70">
-        <div className="mx-auto w-[85%] max-w-[1530px] relative z-10">
+      <section className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden border-y border-slate-200/70">
+        <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] relative z-10">
           
           <div className="flex flex-col items-center text-center mb-14">
             <div className="flex items-center gap-3 mb-2.5">
@@ -270,8 +270,8 @@ export default function AboutPage() {
       {/* ---------------------------------------------------- */}
       {/* 4. STATS STRIP                                       */}
       {/* ---------------------------------------------------- */}
-      <section className="w-full bg-[#051726] text-white py-14 sm:py-18 px-6 sm:px-12 lg:px-16 xl:px-20">
-        <div className="mx-auto w-[85%] max-w-[1530px]">
+      <section className="w-full bg-[#051726] text-white py-14 sm:py-18 px-4 sm:px-12 lg:px-16 xl:px-20">
+        <div className="mx-auto w-full max-w-[1530px] sm:w-[85%]">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:divide-x lg:divide-white/10">
             {STATS.map((s, i) => (
               <div key={i} className={`flex flex-col items-center text-center ${i > 0 ? "lg:pl-8" : ""}`}>
@@ -295,7 +295,7 @@ export default function AboutPage() {
       {/* ---------------------------------------------------- */}
       {/* 5. HOTEL PICKUP REGION MAP CARD                      */}
       {/* ---------------------------------------------------- */}
-      <section className="w-full bg-white text-[#061b2e] py-20 sm:py-24 px-6 sm:px-12 lg:px-16 xl:px-20">
+      <section className="w-full bg-white text-[#061b2e] py-20 sm:py-24 px-4 sm:px-12 lg:px-16 xl:px-20">
         <div className="mx-auto w-[85%] max-w-[1530px]">
           <div className="rounded-3xl bg-gradient-to-br from-[#061b2e] to-[#0a2c4a] text-white p-8 sm:p-12 lg:p-14 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
             

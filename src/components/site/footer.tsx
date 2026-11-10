@@ -7,7 +7,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
   const wa = whatsappLink(settings.whatsappNumber);
   return (
     <footer className="bg-ocean-950 text-white border-t border-white/10">
-      <div className="mx-auto grid w-[80%] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="mx-auto grid w-full max-w-[1530px] sm:w-[85%] lg:w-[80%] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-2 text-white">
             <LogoMark />
@@ -37,7 +37,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto w-[80%] px-4 py-5 text-sm text-white/50 sm:px-6">
+        <p className="mx-auto w-full max-w-[1530px] sm:w-[85%] lg:w-[80%] px-4 py-5 text-sm text-white/50 sm:px-6">
           © {new Date().getFullYear()} {settings.businessName}
         </p>
       </div>

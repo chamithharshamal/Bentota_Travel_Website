@@ -137,7 +137,7 @@ export function PopularDestinationsSection({
         <p className="mr-4">Same Island</p>
       </div>
 
-      <div className="mx-auto w-[85%] max-w-[1530px] relative z-10">
+      <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] relative z-10">
         {/* Section Header */}
         {showHeader && (
           <div className="flex flex-col items-center text-center">

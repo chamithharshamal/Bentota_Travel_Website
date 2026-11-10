@@ -119,7 +119,7 @@ export function MomentsFromTravellersSection() {
         </p>
       </div>
 
-      <div className="mx-auto w-[80%] relative z-10">
+      <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] lg:w-[80%] relative z-10">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center">
           {/* Subtitle tag with horizontal accent lines */}

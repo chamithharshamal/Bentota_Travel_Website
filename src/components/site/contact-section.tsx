@@ -45,7 +45,7 @@ export function ContactUsSection() {
   };
 
   return (
-    <section id="contact" className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-20 sm:py-28 px-6 sm:px-12 lg:px-16 xl:px-20 overflow-hidden scroll-mt-10">
+    <section id="contact" className="relative isolate w-full bg-[#faf8f5] text-[#061b2e] py-16 sm:py-28 px-4 sm:px-12 lg:px-16 xl:px-20 overflow-hidden scroll-mt-10">
       {/* Decorative Cursive Watermark (Right side) */}
       <div
         aria-hidden="true"
@@ -55,7 +55,7 @@ export function ContactUsSection() {
         <p className="mr-4">Your Journey</p>
       </div>
 
-      <div className="mx-auto w-[80%] relative z-10">
+      <div className="mx-auto w-full max-w-[1530px] sm:w-[85%] lg:w-[80%] relative z-10">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center">
           {/* Subtitle tag with horizontal accent lines */}
